@@ -15,5 +15,5 @@ We have chosen the **Standard Project Option**.
 
 
 ---
-💡 * We are **Team [Name]** – striving for innovation, collaboration, and impact! Excited to work together and make this project a success!*  
+💡 *We are **Team [Name]** – striving for innovation, collaboration, and impact! Excited to work together and make this project a success!*  
 
