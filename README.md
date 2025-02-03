@@ -3,11 +3,11 @@
 ## 🚀 Team [Name]
 
 ## 👥 Team Members
-- [Bárbara Flores Ríos]
-- [Shaila Janeth Güereca Guzmán]
-- [Daniela Jiménez Lara]
-- [Jiechen Li]
-- [Simrun Sharma]
+- Bárbara Flores Ríos
+- Shaila Janeth Güereca Guzmán
+- Daniela Jiménez Lara
+- Jiechen Li
+- Simrun Sharma
 
 ## 📌 Project Option
 We have chosen the **Standard Project Option**.
