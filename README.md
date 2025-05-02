@@ -20,13 +20,13 @@ From personalized orders to seller dashboards, we’ve got the essentials and mo
 We have chosen the **Standard Project Option**.
 
 ## 📺 Project Demo Video (~15 minutes)
-🔗 [Watch Our Demo Video](https://www.youtube.com/watch?v=GVMNRrzjeIs)
+[Watch Our Demo Video](https://www.youtube.com/watch?v=GVMNRrzjeIs)
 
 ## ✨Feature Lists
-🔗 [Full Feature List](https://docs.google.com/document/d/1XAlcIsGDkeXz2OzyxlBozeXgLm_WxdnBtcuDOdVjFv0/edit?usp=sharing)
+[Full Feature Lists](https://docs.google.com/document/d/1XAlcIsGDkeXz2OzyxlBozeXgLm_WxdnBtcuDOdVjFv0/edit?usp=sharing)
 
 ## 📂 Repository Link  
-🔗 [GitLab Repository](https://gitlab.oit.duke.edu/ss1486/sql-sisters)  
+[GitLab Repository](https://gitlab.oit.duke.edu/ss1486/sql-sisters)  
 
 ## 📝 Progress Summary  
 Each team member has independently completed all the **initial setup requirements** for `README.md` and `TUTORIAL.md` and has successfully created their respective branches. Everyone was responsible for designing the **database tables** for their assigned website features, as well as the **UI and interactions**.  
