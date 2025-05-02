@@ -1,0 +1,132 @@
+{% extends "seller/sellerBase.html" %}
+
+{% block content %}
+
+<!-- Product Management Section -->
+<div id="product-section">
+    <h1>Product Management - Seller {{ seller_name }} (ID: {{ seller_id }})</h1>
+
+    <!-- Search Bar and Add Product Button -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 1em 0;">
+        <input type="text" id="search-input" placeholder="Search by Product ID or Name..."
+            style="padding: 0.5em; width: 260px;">
+        <a href="#" class="btn-add" onclick="app.showAddProductForm()">+ Add Product</a>
+    </div>
+
+    <!-- Product Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Added</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="product-table-body">
+            {% for p in products %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.category }}</td>
+                <td>{{ p.stock }}</td>
+                <td>{{ p.price }}</td>
+                <td>
+                    <span class="status-label {{ p.status | lower | replace(' ', '-') }}">
+                        {{ p.status }}
+                    </span>
+                </td>
+                <td>{{ p.date_added }}</td>
+                <td>
+                    <span class="edit-btn" data-id="{{ p.id }}">✏️</span>
+                    <span class="delete-btn">🗑️</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination for Product Table -->
+    <div id="pagination" style="margin-top: 1em; text-align: center;"></div>
+</div>
+
+<!-- Add/Edit Modal with Overlay -->
+<div id="product-modal-overlay" class="modal-overlay">
+    <div id="product-modal" class="modal-content">
+        <h2 id="modal-title">Edit Product</h2>
+        <form id="product-form">
+            <input type="hidden" id="product-id">
+            <div class="form-group">
+                <label for="product-name">Name:</label>
+                <input type="text" id="product-name">
+            </div>
+            <div class="form-group">
+                <label for="product-category">Category:</label>
+                <input type="text" id="product-category">
+            </div>
+            <div class="form-group">
+                <label for="product-stock">Stock:</label>
+                <input type="number" id="product-stock" min="0">
+            </div>
+            <div class="form-group">
+                <label for="product-lowStock">Low Stock Quantity:</label>
+                <input type="number" id="product-lowStock" min="0">
+            </div>
+            <div class="form-group">
+                <label for="product-price">Price:</label>
+                <input type="number" id="product-price" step="0.01" min="0">
+            </div>
+            <div class="form-group">
+                <label for="product-status">Status:</label>
+                <select id="product-status">
+                    <option value="Published">Published</option>
+                    <option value="Draft">Draft</option>
+                </select>
+            </div>
+            <div style="text-align: right; margin-top: 1.5em;">
+                <button type="submit" class="primary-button">Save</button>
+                <button type="button" onclick="app.closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Product Confirmation Modal -->
+<div id="delete-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Confirm Deletion</h3>
+        <p id="delete-modal-message">Are you sure you want to delete this product?</p>
+        <div class="modal-buttons">
+            <button id="confirm-delete" class="primary-button">Yes, Delete</button>
+            <button id="cancel-delete">Cancel</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+<!-- Load JavaScript Files -->
+<script src="{{ url_for('static', filename='js/seller/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/seller/productTable.js') }}"></script>
+
+<!-- Pass Product Data to Frontend -->
+<script>
+    window.productsData = {{ products | tojson }};
+</script>
+
+<!-- Initialize Product Table -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('product-table-body')) {
+            window.productTable = new ProductTable(window.productsData);
+        }
+        window.app.init();
+    });
+</script>
+
+{% endblock %}

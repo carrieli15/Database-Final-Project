@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow border-0 rounded-lg">
+    <div class="card-header bg-gradient-primary text-white">
+      <h2 class="mb-0"><i class="fas fa-wallet me-2"></i>Account Balance</h2>
+    </div>
+    
+    <div class="card-body">
+      <!-- Top Row - Balance and Add Funds (same height) -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card bg-gradient-success text-white shadow h-100">
+            <div class="card-header">
+              <h5 class="mb-0"><i class="fas fa-wallet me-2"></i>Current Balance</h5>
+            </div>
+            <div class="card-body d-flex align-items-center">
+              <div class="d-flex justify-content-between align-items-center w-100">
+                <h1 class="display-4 mb-0 text-white">${{ '{:.2f}'.format(current_balance) }}</h1>
+                <div class="fa-3x opacity-50">
+                  <i class="fas fa-dollar-sign"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card shadow h-100">
+            <div class="card-header bg-gradient-info text-white">
+              <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add Funds</h5>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+              <form method="POST" class="form-inline">
+                {{ form.hidden_tag() }}
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                  {{ form.amount(class="form-control", placeholder="Amount to add") }}
+                  <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-credit-card me-1"></i> {{ form.submit.label.text }}
+                  </button>
+                </div>
+                <small class="text-muted mt-2 d-block">Add funds to your account for future purchases.</small>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Balance and Transaction in two columns -->
+      <div class="row mb-4">
+        <!-- Left Column: Balance Trends -->
+        <div class="col-md-6">
+          <div class="card shadow h-100">
+            <div class="card-header bg-gradient-warning text-white">
+              <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Balance Trends</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" style="position: relative; height:280px;">
+                <canvas id="balanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Column: Transaction History Header -->
+        <div class="col-md-6">
+          <div class="card shadow h-100">
+            <div class="card-header bg-gradient-secondary text-white d-flex justify-content-between align-items-center">
+              <h5 class="mb-0"><i class="fas fa-history me-2"></i>Transaction History</h5>
+              <button class="btn btn-sm btn-light" id="toggleChartView">
+                <i class="fas fa-chart-pie me-1"></i> Toggle View
+              </button>
+            </div>
+            <div class="card-body">
+              {% if history %}
+                <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+                  <table class="table table-hover table-striped table-bordered table-sm">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>Amount ($)</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for txn in history %}
+                      <tr>
+                        {% if txn[1] == 'deposit' %}
+                          <td class="text-success fw-bold">+{{ '{:.2f}'.format(txn[0]) }}</td>
+                        {% else %}
+                          <td class="text-danger fw-bold">{{ '{:.2f}'.format(txn[0]) }}</td>
+                        {% endif %}
+                        <td>
+                          {% if txn[1] == 'deposit' %}
+                            <span class="badge bg-success"><i class="fas fa-arrow-up me-1"></i>{{ txn[1].capitalize() }}</span>
+                          {% else %}
+                            <span class="badge bg-danger"><i class="fas fa-arrow-down me-1"></i>{{ txn[1].capitalize() }}</span>
+                          {% endif %}
+                        </td>
+                        <td><i class="far fa-calendar-alt me-1"></i>{{ txn[2] }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Alternative Chart View (initially hidden) -->
+                <div id="transactionChartView" style="display: none; height: 280px;">
+                  <div class="row h-100">
+                    <div class="col-md-6">
+                      <canvas id="transactionTypeChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                      <canvas id="transactionAmountsChart"></canvas>
+                    </div>
+                  </div>
+                </div>
+                
+              {% else %}
+                <div class="alert alert-info">
+                  <i class="fas fa-info-circle me-2"></i>No transaction history available.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Charts (Full Width) -->
+      <div class="card shadow mt-4">
+        <div class="card-header bg-gradient-primary text-white">
+          <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Transaction Summary</h5>
+        </div>
+        <div class="card-body">
+          {% if history %}
+            <div class="row">
+              <div class="col-md-6">
+                <canvas id="monthlySummaryChart" height="200"></canvas>
+              </div>
+              <div class="col-md-6">
+                <canvas id="balanceDistributionChart" height="200"></canvas>
+              </div>
+            </div>
+          {% else %}
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>No transaction data available for analysis.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Get transaction data from the table
+  const transactionRows = document.querySelectorAll('tbody tr');
+  const balanceData = [];
+  const timeData = [];
+  let runningBalance = {{ current_balance }};
+  
+  // Process transactions in reverse to calculate historical balance
+  const transactions = [];
+  transactionRows.forEach(row => {
+    const amountText = row.cells[0].textContent;
+    const amount = parseFloat(amountText.replace('+', ''));
+    const type = row.cells[1].textContent.trim().toLowerCase();
+    const date = row.cells[2].textContent.trim();
+    
+    transactions.push({
+      amount: amount,
+      type: type.includes('deposit') ? 'deposit' : 'purchase',
+      date: date
+    });
+  });
+  
+  // Reverse to get chronological order and calculate running balance
+  transactions.reverse();
+  let currentBalance = 0;
+  
+  transactions.forEach(txn => {
+    if (txn.type === 'deposit') {
+      currentBalance += txn.amount;
+    } else {
+      currentBalance -= Math.abs(txn.amount);
+    }
+    
+    balanceData.push(currentBalance);
+    timeData.push(txn.date);
+  });
+  
+  // Add current balance as the last point
+  balanceData.push({{ current_balance }});
+  timeData.push('Today');
+  
+  // Create the balance chart
+  const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+  const balanceChart = new Chart(balanceCtx, {
+    type: 'line',
+    data: {
+      labels: timeData,
+      datasets: [{
+        label: 'Balance ($)',
+        data: balanceData,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 5
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Transaction type pie chart
+  const toggleChartBtn = document.getElementById('toggleChartView');
+  const chartView = document.getElementById('transactionChartView');
+  const tableView = document.querySelector('.table-responsive');
+  
+  if (toggleChartBtn) {
+    toggleChartBtn.addEventListener('click', function() {
+      if (chartView.style.display === 'none') {
+        // Hide table, show charts
+        tableView.style.display = 'none';
+        chartView.style.display = 'block';
+        toggleChartBtn.innerHTML = '<i class="fas fa-table me-1"></i> Show Table';
+        
+        // Count deposits and purchases
+        let deposits = 0;
+        let purchases = 0;
+        transactions.forEach(txn => {
+          if (txn.type === 'deposit') {
+            deposits++;
+          } else {
+            purchases++;
+          }
+        });
+        
+        // Create transaction type chart
+        const typeCtx = document.getElementById('transactionTypeChart').getContext('2d');
+        new Chart(typeCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Deposits', 'Purchases'],
+            datasets: [{
+              data: [deposits, purchases],
+              backgroundColor: [
+                'rgba(40, 167, 69, 0.8)',
+                'rgba(220, 53, 69, 0.8)'
+              ],
+              borderColor: [
+                'rgba(40, 167, 69, 1)',
+                'rgba(220, 53, 69, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              },
+              title: {
+                display: true,
+                text: 'Transaction Types',
+                font: { size: 14 }
+              }
+            }
+          }
+        });
+        
+        // Sum deposits and purchases amounts
+        let depositAmount = 0;
+        let purchaseAmount = 0;
+        transactions.forEach(txn => {
+          if (txn.type === 'deposit') {
+            depositAmount += txn.amount;
+          } else {
+            purchaseAmount += Math.abs(txn.amount);
+          }
+        });
+        
+        // Create transaction amounts chart
+        const amountCtx = document.getElementById('transactionAmountsChart').getContext('2d');
+        new Chart(amountCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Deposits', 'Purchases'],
+            datasets: [{
+              label: 'Amount ($)',
+              data: [depositAmount, purchaseAmount],
+              backgroundColor: [
+                'rgba(40, 167, 69, 0.8)',
+                'rgba(220, 53, 69, 0.8)'
+              ],
+              borderColor: [
+                'rgba(40, 167, 69, 1)',
+                'rgba(220, 53, 69, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              title: {
+                display: true,
+                text: 'Transaction Amounts',
+                font: { size: 14 }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function(value) {
+                    return '$' + value;
+                  }
+                }
+              }
+            }
+          }
+        });
+        
+      } else {
+        // Show table, hide charts
+        tableView.style.display = 'block';
+        chartView.style.display = 'none';
+        toggleChartBtn.innerHTML = '<i class="fas fa-chart-pie me-1"></i> Toggle View';
+      }
+    });
+  }
+  
+  // Monthly summary chart
+  const monthlySummaryCtx = document.getElementById('monthlySummaryChart').getContext('2d');
+  
+  // Group transactions by month
+  const monthlyData = {};
+  transactions.forEach(txn => {
+    // Extract month and year from date
+    const dateParts = txn.date.split(' ')[0].split('-');
+    const monthYear = dateParts[0] + '-' + dateParts[1]; // YYYY-MM
+    
+    if (!monthlyData[monthYear]) {
+      monthlyData[monthYear] = {
+        deposits: 0,
+        purchases: 0
+      };
+    }
+    
+    if (txn.type === 'deposit') {
+      monthlyData[monthYear].deposits += txn.amount;
+    } else {
+      monthlyData[monthYear].purchases += Math.abs(txn.amount);
+    }
+  });
+  
+  // Convert to chart data
+  const monthLabels = Object.keys(monthlyData).sort();
+  const depositData = monthLabels.map(month => monthlyData[month].deposits);
+  const purchaseData = monthLabels.map(month => monthlyData[month].purchases);
+  
+  // Format month labels
+  const formattedMonthLabels = monthLabels.map(monthYear => {
+    const [year, month] = monthYear.split('-');
+    const date = new Date(year, month - 1);
+    return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+  });
+  
+  new Chart(monthlySummaryCtx, {
+    type: 'bar',
+    data: {
+      labels: formattedMonthLabels,
+      datasets: [
+        {
+          label: 'Deposits',
+          data: depositData,
+          backgroundColor: 'rgba(40, 167, 69, 0.7)',
+          borderColor: 'rgba(40, 167, 69, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Purchases',
+          data: purchaseData,
+          backgroundColor: 'rgba(220, 53, 69, 0.7)',
+          borderColor: 'rgba(220, 53, 69, 1)',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Monthly Transaction Summary',
+          font: { size: 14 }
+        }
+      },
+      scales: {
+        x: {
+          stacked: false
+        },
+        y: {
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  // Create transaction type chart for the transaction summary section
+  const balanceDistributionCtx = document.getElementById('balanceDistributionChart').getContext('2d');
+  
+  // Count deposits and purchases for the pie chart
+  let pieDeposits = 0;
+  let piePurchases = 0;
+  transactions.forEach(txn => {
+    if (txn.type === 'deposit') {
+      pieDeposits++;
+    } else {
+      piePurchases++;
+    }
+  });
+  
+  new Chart(balanceDistributionCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Deposits', 'Purchases'],
+      datasets: [{
+        data: [pieDeposits, piePurchases],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(255, 99, 132, 0.7)'
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 99, 132, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Transaction Types',
+          font: { size: 16 }
+        }
+      }
+    }
+  });
+});
+</script>
+
+<style>
+.bg-gradient-primary {
+  background: linear-gradient(to right, #4e73df, #224abe);
+}
+.bg-gradient-info {
+  background: linear-gradient(to right, #36b9cc, #258391);
+}
+.bg-gradient-success {
+  background: linear-gradient(to right, #1cc88a, #13855c);
+}
+.bg-gradient-warning {
+  background: linear-gradient(to right, #f6c23e, #dda20a);
+}
+.bg-gradient-secondary {
+  background: linear-gradient(to right, #858796, #60616f);
+}
+.card {
+  border-radius: 0.5rem;
+}
+.card-header {
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+.table {
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+</style>
+{% endblock %}

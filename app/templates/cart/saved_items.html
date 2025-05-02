@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Saved Items</h1>
+    
+    {% if saved_items %}
+        <div class="row">
+            {% for product in saved_items %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if product.image %}
+                    <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">${{ product.price|round(2) }}</p>
+                        <form method="post" action="{{ url_for('cart.move_to_cart', product_id=product.product_id) }}">
+                            <button type="submit" class="btn btn-primary">Move to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            You don't have any saved items. <a href="{{ url_for('index.index') }}">Continue shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

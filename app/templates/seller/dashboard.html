@@ -1,0 +1,147 @@
+{% extends "seller/sellerBase.html" %}
+
+{% block content %}
+
+<!-- Dashboard Section -->
+<div id="dashboard-section">
+    <h1>Welcome {{ seller_name }} (ID: {{ seller_id }})</h1>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <!-- Total Orders Card -->
+        <div class="summary-card">
+            <h3>Total Orders</h3>
+            <p>{{ current_orders }}</p>
+            {% if order_diff is not none %}
+            <p class="change {{ 'positive' if order_diff > 0 else 'negative' }}">
+                {{ '+' if order_diff > 0 else '-' }}{{ order_diff | abs }} orders vs {{ order_basis }}
+            </p>
+            {% else %}
+            <p class="change">No data for comparison</p>
+            {% endif %}
+        </div>
+
+        <!-- Lifetime Revenue Card -->
+        <div class="summary-card">
+            <h3>Lifetime Revenue</h3>
+            <p>${{ current_revenue }}</p>
+            {% if revenue_diff is not none %}
+            <p class="change {{ 'positive' if revenue_diff > 0 else 'negative' }}">
+                {{ '+' if revenue_diff > 0 else '-' }} ${{ revenue_diff | abs }} vs {{ revenue_basis }}
+            </p>
+            {% else %}
+            <p class="change">No data for comparison</p>
+            {% endif %}
+        </div>
+
+        <!-- Average Order Value Card -->
+        <div class="summary-card">
+            <h3>Average Order Value</h3>
+            <p>${{ avg_order_value }}</p>
+        </div>
+    </div>
+
+    <!-- Visualization -->
+    <div class="dashboard-grid">
+        <!-- Inventory vs. Total Sold Chart -->
+        <div class="chart-card">
+            <h2>Inventory vs. Total Sold (All Time)</h2>
+            <canvas id="inventorySalesChart"></canvas>
+        </div>
+
+        <!-- Top Products by Order Count Chart -->
+        <div class="chart-card">
+            <h2>Top Products by Order Count (All Time)</h2>
+            <canvas id="productPopularityChart"></canvas>
+        </div>
+
+        <!-- Order Status Distribution Chart -->
+        <div class="chart-card">
+            <h2>Order Status Distribution (All Time)</h2>
+            <canvas id="orderStatusChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Recent Product Reviews and Recent Orders -->
+    <div class="dashboard-activity-grid">
+        <!-- Recent Product Reviews List -->
+        <div class="activity-card" style="max-height: 350px; overflow-y: auto;">
+            <h2>Recent Product Reviews</h2>
+            {% for review in recent_reviews %}
+            <div class="review-item"
+                style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ccc; word-break: break-word;">
+                <strong>{{ review.product_name }}</strong> - by {{ review.reviewer }}<br>
+
+                <div style="font-size: 1.1rem; color: #f4c542; margin: 2px 0;">
+                    {% for i in range(review.rating) %}⭐{% endfor %}
+                    <span style="font-size: 0.85rem; color: #666;">({{ review.rating }})</span>
+                </div>
+
+                <div style="font-size: 0.8rem; color: #999;">{{ review.updated_at }}</div>
+
+                <div style="font-style: italic; font-size: 0.9rem; margin-top: 3px;">"{{ review.comment }}"</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Recent Orders List-->
+        <div class="activity-card" style="max-height: 350px; overflow-y: auto;">
+            <h2>Recent Orders</h2>
+            {% for order in orders %}
+            <div class="order-item" style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
+                <strong>{{ order.product_name }}</strong><br>
+                <span style="font-size: 0.95rem; color: #333;">{{ order.price }} × {{ order.quantity }}</span><br>
+                <div style="font-size: 0.8rem; color: #555;">Buyer: {{ order.buyer_name }}</div>
+                <div style="margin-top: 3px; font-size: 0.8rem; color: #666;">
+                    <span class="status-label {{ order.status | lower}}">
+                        {{ order.status | capitalize }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Top Buyers -->
+        <div class="activity-card">
+            <h2>Top Buyers</h2>
+            {% for buyer in top_buyers %}
+            <div class="buyer-item" style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ccc;">
+                <strong>{{ buyer.name }}</strong><br>
+                <span style="font-size: 0.95rem; color: #333;">Orders: {{ buyer.num_orders }}</span><br>
+                <span style="font-size: 0.9rem; color: #666;">Spent: ${{ buyer.total_spent }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div> <!-- End of Dashboard Section -->
+
+    {% endblock %}
+
+    {% block scripts %}
+    <!-- Initialize Chart Data -->
+    <script>
+        window.inventorySalesData = {{ inventory_sales_data | default ({}) | tojson }};
+        window.productPopularityData = {{ product_popularity_data | tojson }};
+        window.orderStatusData = {{ order_status_data | tojson }};
+    </script>
+
+    <!-- Load Charts.js Functions -->
+    <script src="{{ url_for('static', filename='js/seller/charts.js') }}"></script>
+
+    <!-- Initialize Dashboard Charts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.inventorySalesData && document.getElementById('inventorySalesChart')) {
+                initInventorySalesChart(window.inventorySalesData);
+            }
+            if (window.productPopularityData && document.getElementById('productPopularityChart')) {
+                initProductPopularityChart(window.productPopularityData);
+            }
+            if (window.orderStatusData && document.getElementById('orderStatusChart')) {
+                initOrderStatusChart(window.orderStatusData);
+            }
+        });
+    </script>
+
+    {% endblock %}

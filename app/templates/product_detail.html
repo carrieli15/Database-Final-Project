@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<div class="container">
+  <div class="row">
+    <!-- Image -->
+    <div class="col-md-6">
+      {% if product.image %}
+      <img src="{{ url_for('static', filename='images/' + product.image) }}" class="img-fluid rounded mb-3" alt="{{ product.name }}">
+      {% else %}
+      <div class="bg-light p-4 text-center rounded mb-3">
+        <p class="text-muted">No image available</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-md-6">
+      <h3>{{ product.name }}</h3>
+      <p><strong>Product ID:</strong> {{ product.id }}</p>
+      <p><strong>Price:</strong> ${{ product.price }}</p>
+      <p>
+        <strong>Availability:</strong> 
+        {% if product.available %}
+          <span class="text-success">In Stock</span>
+        {% else %}
+          <span class="text-danger">Out of Stock</span>
+        {% endif %}
+      </p>
+      
+      {% if product.description %}
+        <p><strong>Description:</strong> {{ product.description }}</p>
+      {% endif %}
+      
+      <!-- Category -->
+      {% if product.category %}
+        <p><strong>Category:</strong> {{ product.category }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Sellers Inventory -->
+  <div class="row mt-4">
+    <div class="col">
+      <h4>Available from sellers</h4>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Seller</th>
+              <th>Price</th>
+              <th>Quantity Available</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for seller in sellers_inventory %}
+            <tr>
+              <td>{{ seller[5] }}</td> <!-- seller_name -->
+              <td>${{ seller[3] }}</td> <!-- price -->
+              <td>{{ seller[2] }}</td> <!-- quantity -->
+              <td>
+                {% if seller[2] > 0 %}
+                <form action="{{ url_for('cart.add_to_cart') }}" method="post">
+                  <input type="hidden" name="product_id" value="{{ seller[0] }}">
+                  <input type="hidden" name="seller_id" value="{{ seller[4] }}">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="btn btn-sm btn-success">
+                    <i class="fas fa-cart-plus"></i> Add To Cart
+                  </button>
+                </form>
+                {% else %}
+                <button class="btn btn-sm btn-secondary" disabled>Out of Stock</button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review and Navigation Buttons -->
+  <div class="row mt-4">
+    <div class="col">
+      <a href="{{ url_for('product_reviews.product_reviews_by_product', product_id=product.id) }}" class="btn btn-secondary me-2">View reviews</a>
+
+      {% if current_user.is_authenticated and check_user_has_purchased(current_user.id, product.id) %}
+        <a href="{{ url_for('product_reviews.add_product_review', product_id=product.id) }}" class="btn btn-secondary me-2">Add review</a>
+      {% endif %}
+
+      <a href="{{ url_for('index.index') }}" class="btn btn-secondary">Back to Products</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Mini Amazon</title>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/example.css') }}">
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+    }
+
+    .main-head {
+      height: 150px;
+      background: #FFF;
+    }
+
+    .sidenav {
+      height: 100%;
+      background-color: #5d6ca6; /* Changed from #000 to #5d6ca6 */
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+
+    .main {
+      padding: 0px 10px;
+    }
+
+    .login-main-text {
+      margin-top: 20%;
+      padding: 60px;
+      color: #fff;
+    }
+
+    .login-main-text h2 {
+      font-weight: 300;
+    }
+
+    .btn-black {
+      background-color: #5d6ca6 !important; /* Changed from #000 to #5d6ca6 */
+      color: #fff;
+    }
+
+    .nav-link {
+      color: white;
+      display: inline-block;
+      margin: 5px 0;
+    }
+
+    .nav-link:hover {
+      color: #e8eaf6; /* Changed from #ccc to a lighter shade that works with #5d6ca6 */
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidenav">
+    {% block msg %}
+    <h1 style="color:aliceblue"> Mini Amazon</h1>
+    <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
+      {% if current_user.is_authenticated %}
+      <p>Hello {{current_user.name}}! </p>
+      <div style="margin-bottom: 15px;">
+        <a href="{{ url_for('index.index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('users.profile') }}" class="nav-link">User Profile</a>
+        <!-- WE NEED TO CHANGE users.profile for sellers.profile here -->
+        <a href="{{ url_for('seller.seller_dashboard') }}" class="nav-link">Seller Profile</a>
+        <a href="{{ url_for('cart.index') }}" class="nav-link">My Cart</a>
+        <a href="{{ url_for('users.logout') }}" class="nav-link">Log out</a>
+      </div>
+      {% else %}
+      <a href="{{ url_for('index.index') }}" class="nav-link">Home</a>
+      <a href="{{ url_for('users.login') }}" class="nav-link">Log in</a>
+      <a href="{{ url_for('users.register') }}" class="nav-link">Register</a>
+      <!-- Cart button removed for logged-out users -->
+      {% endif %}
+    </div>
+    {% endblock %}
+  </div>
+  <div class="main">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-info mt-3">
+      <ul class="list-unstyled mb-0">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+
+</html>

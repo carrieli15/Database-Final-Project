@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+{% if current_user.is_authenticated %}
+<h2>Add Review for Product #{{product_id}}:</h2>
+
+<div class="container">
+  <form method="post">
+    <div class="form-group">
+      <label for="rating">Rating:</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="rating" id="rating1" value="1" required>
+        <label class="form-check-label" for="rating1">1 ★</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="rating" id="rating2" value="2">
+        <label class="form-check-label" for="rating2">2 ★</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="rating" id="rating3" value="3">
+        <label class="form-check-label" for="rating3">3 ★</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="rating" id="rating4" value="4">
+        <label class="form-check-label" for="rating4">4 ★</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="rating" id="rating5" value="5">
+        <label class="form-check-label" for="rating5">5 ★</label>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="review_text">Your Review:</label>
+      <textarea class="form-control" id="review_text" name="review_text" rows="5" required></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+    <a href="{{ url_for('product_reviews.product_reviews_by_product', product_id=product_id) }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% else %}
+<p><a href="{{ url_for('users.login') }}">Log in</a> to add a review!</p>
+{% endif %}
+
+{% endblock %}

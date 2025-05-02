@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Seller Dashboard</title>
+
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/seller.css') }}">
+
+    <!-- Load Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h2>Mini Amazon</h2>
+        <a href="{{ url_for('seller.seller_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('seller.seller_products') }}">Product Management</a>
+        <a href="{{ url_for('seller.seller_orders') }}">Order Management</a>
+        <a href="{{ url_for('seller.seller_reviews') }}">Seller Reviews</a>
+
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="{{ url_for('index.index') }}" class="home-button">Home</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Additional Scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

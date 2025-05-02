@@ -1,0 +1,78 @@
+{% extends "seller/sellerBase.html" %}
+
+{% block content %}
+
+<h2>Your Seller Reviews</h2>
+
+{% if reviews %}
+<div class="summary-card" style="max-width: 100%; background-color: #f8f9fa; margin-bottom: 20px; padding: 20px; border-radius: 10px;">
+  <div class="chart-header">
+    <h3>Review Summary</h3>
+  </div>
+  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <div style="flex: 1; min-width: 250px;">
+      {% set avg_rating = reviews|map(attribute='rating')|sum / reviews|length %}
+      <h4>Average Rating: 
+        {{ "%.1f"|format(avg_rating) }} / 5
+        <span style="color: #ffc107;">
+          {% for i in range(avg_rating|round|int) %}★{% endfor %}
+        </span>
+      </h4>
+      <p>Based on {{ reviews|length }} review{% if reviews|length != 1 %}s{% endif %}</p>
+    </div>
+    <div style="flex: 1; min-width: 250px;">
+      {% set first_review = reviews|sort(attribute='updated_at')|last %}
+      {% set last_review = reviews|sort(attribute='updated_at')|first %}
+      <p><strong>First review:</strong> {{ first_review.updated_at.strftime('%B %d, %Y') }}</p>
+      <p><strong>Latest review:</strong> {{ last_review.updated_at.strftime('%B %d, %Y') }}</p>
+    </div>
+  </div>
+</div>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <div>
+    <form style="display: flex; align-items: center;">
+      <label for="sortOrder" style="margin-right: 10px;">Sort by:</label>
+      <select id="sortOrder" onchange="this.form.submit()" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+        <option value="date_desc" {% if request.args.get('sort') == 'date_desc' or not request.args.get('sort') %}selected{% endif %}>Newest first</option>
+        <option value="date_asc" {% if request.args.get('sort') == 'date_asc' %}selected{% endif %}>Oldest first</option>
+        <option value="rating_desc" {% if request.args.get('sort') == 'rating_desc' %}selected{% endif %}>Highest rating</option>
+        <option value="rating_asc" {% if request.args.get('sort') == 'rating_asc' %}selected{% endif %}>Lowest rating</option>
+      </select>
+    </form>
+  </div>
+</div>
+{% else %}
+<div style="background-color: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+  <p>You don't have any reviews yet.</p>
+</div>
+{% endif %}
+
+{% if reviews %}
+<table>
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Rating</th>
+      <th>Review</th>
+      <th>Last Updated</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in reviews %}
+      <tr>
+        <td>{{ review.username }}</td>
+        <td>
+          <span style="color: #ffc107;">
+            {% for i in range(review.rating) %}★{% endfor %}
+          </span>
+        </td>
+        <td>{{review.review_text}}</td>
+        <td>{{humanize_time(review.updated_at)}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

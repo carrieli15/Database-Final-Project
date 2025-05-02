@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<h2>Reviews for Product #{{product_id}}:</h2>
+
+{% if reviews %}
+<div class="card mb-4">
+  <div class="card-header bg-light">
+    <h4>Review Summary</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Rating: 
+          {% set avg_rating = reviews|map(attribute='rating')|sum / reviews|length %}
+          {{ "%.1f"|format(avg_rating) }} / 5
+          <span class="text-warning">
+            {% for i in range(avg_rating|round|int) %}★{% endfor %}
+          </span>
+        </h5>
+        <p>Based on {{ reviews|length }} review{% if reviews|length != 1 %}s{% endif %}</p>
+      </div>
+      <div class="col-md-6">
+        {% set first_review = reviews|sort(attribute='updated_at')|last %}
+        {% set last_review = reviews|sort(attribute='updated_at')|first %}
+        <p><strong>First review:</strong> {{ first_review.updated_at.strftime('%B %d, %Y') }}</p>
+        <p><strong>Latest review:</strong> {{ last_review.updated_at.strftime('%B %d, %Y') }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <form class="form-inline" method="GET" action="{{ url_for('product_reviews.product_reviews_by_product', product_id=product_id) }}">
+      <div class="form-group mr-2">
+        <label for="sortOrder" class="mr-2">Sort by:</label>
+        <select class="form-control" id="sortOrder" name="sort" onchange="this.form.submit()">
+          <option value="date_desc" {% if request.args.get('sort') == 'date_desc' or not request.args.get('sort') %}selected{% endif %}>Newest first</option>
+          <option value="date_asc" {% if request.args.get('sort') == 'date_asc' %}selected{% endif %}>Oldest first</option>
+          <option value="rating_desc" {% if request.args.get('sort') == 'rating_desc' %}selected{% endif %}>Highest rating</option>
+          <option value="rating_asc" {% if request.args.get('sort') == 'rating_asc' %}selected{% endif %}>Lowest rating</option>
+          <option value="upvotes_desc" {% if request.args.get('sort') == 'upvotes_desc' %}selected{% endif %}>Most upvoted</option>
+          <option value="upvotes_asc" {% if request.args.get('sort') == 'upvotes_asc' %}selected{% endif %}>Least upvoted</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  
+  {% if current_user.is_authenticated %}
+  <div>
+    <a href="{{ url_for('product_reviews.add_product_review', product_id=product_id) }}" class="btn btn-primary">Add Review</a>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  <p>No reviews yet for this product.</p>
+  {% if current_user.is_authenticated %}
+  <p><a href="{{ url_for('product_reviews.add_product_review', product_id=product_id) }}" class="btn btn-primary">Be the first to add a review</a></p>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if reviews %}
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">User ID</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Review</th>
+      <th scope="col">Last Updated</th>
+      <th scope="col">Upvotes</th>
+      {% if current_user.is_authenticated %}
+      <th scope="col">Actions</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for review in reviews %}
+      <tr>
+        <th scope="row">
+          {% if review.user_id == current_user.id %}
+            You
+          {% else %}
+            {{review.user_id}}
+          {% endif %}
+        </th>
+        <td>
+          {% for i in range(review.rating) %}
+            <span class="text-warning">★</span>
+          {% endfor %}
+        </td>
+        <td>{{review.review_text}}</td>
+        <td>{{humanize_time(review.updated_at)}}</td>
+        <td>
+          <div class="d-flex align-items-center">
+            {% if current_user.is_authenticated and review.user_id != current_user.id %}
+              <button 
+                class="btn btn-sm {% if review.product_review_id in user_upvoted_reviews %}btn-primary{% else %}btn-outline-primary{% endif %} upvote-btn mr-2" 
+                data-review-id="{{ review.product_review_id }}"
+                data-upvoted="{% if review.product_review_id in user_upvoted_reviews %}true{% else %}false{% endif %}"
+              >
+                <i class="fas fa-thumbs-up"></i>
+              </button>
+            {% endif %}
+            <span class="upvote-count" id="upvote-count-{{ review.product_review_id }}">
+              {{ review.upvote_count }}
+            </span>
+          </div>
+        </td>
+        {% if current_user.is_authenticated and review.user_id == current_user.id %}
+        <td>
+          <a href="{{ url_for('product_reviews.edit_product_review', review_id=review.product_review_id) }}" class="btn btn-sm btn-primary">Edit</a>
+          <form action="{{ url_for('product_reviews.delete_product_review', review_id=review.product_review_id) }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+          </form>
+        </td>
+        {% elif current_user.is_authenticated %}
+        <td>-</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Add this JavaScript for handling upvotes with AJAX -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const upvoteBtns = document.querySelectorAll('.upvote-btn');
+  
+  upvoteBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const reviewId = this.getAttribute('data-review-id');
+      const isUpvoted = this.getAttribute('data-upvoted') === 'true';
+      
+      // Send AJAX request to upvote/remove upvote
+      fetch(`/product/review/${reviewId}/upvote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          // Update the UI
+          const upvoteCount = document.getElementById(`upvote-count-${reviewId}`);
+          upvoteCount.textContent = data.upvote_count;
+          
+          // Toggle button appearance
+          if (data.action === 'added') {
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            this.setAttribute('data-upvoted', 'true');
+          } else {
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-outline-primary');
+            this.setAttribute('data-upvoted', 'false');
+          }
+        } else {
+          console.error('Error:', data.error);
+          alert('Failed to process upvote. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
+    });
+  });
+});
+</script>
+{% endif %}
+
+{% endblock %}
