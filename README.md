@@ -1,8 +1,11 @@
-# CompSci 516 Database Final Project
+# CompSci 516 Database Final Project -- Mini Amazon
 
-## 🚀 Team SQLSisters
+**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)**😄
 
-## 👥 Team Members
+Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with features.
+From personalized orders to seller dashboards, we’ve got the essentials and more!
+
+## 👥 Team SQLSisters
 - [Bárbara Flores Ríos](https://github.com/BarbaraPFloresRios) - Products Guru: responsible for Products
 
 - [Shaila Janeth Güereca Guzmán](https://github.com/shailajgg) - Carts Guru: responsible for Cart / Order
@@ -15,6 +18,12 @@
 
 ## 📌 Project Option
 We have chosen the **Standard Project Option**.
+
+## 📺 Project Demo Video (~15 minutes)
+🔗 [Watch Our Demo Video](https://www.youtube.com/watch?v=GVMNRrzjeIs)
+
+## ✨Feature Lists
+🔗 [Full Feature List](https://docs.google.com/document/d/1XAlcIsGDkeXz2OzyxlBozeXgLm_WxdnBtcuDOdVjFv0/edit?usp=sharing)
 
 ## 📂 Repository Link  
 🔗 [GitLab Repository](https://gitlab.oit.duke.edu/ss1486/sql-sisters)  
