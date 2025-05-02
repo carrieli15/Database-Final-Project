@@ -1,6 +1,6 @@
 # CompSci 516 Database Final Project -- Mini Amazon
 
-**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)**😄
+**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)** 😄
 
 Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with features.
 From personalized orders to seller dashboards, we’ve got the essentials and more!
