@@ -1,9 +1,13 @@
 # CompSci 516 Database Final Project -- Mini Amazon
 
-**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)** 😄
+## 🏆 Award-Winning Project
+
+**🎉 Our project was honored as the _Standard/Open Project Runners-up_ for _Audience Award_ in CompSci 516 (Spring 2025)!**
 
 Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with features.
 From personalized orders to seller dashboards, we’ve got the essentials and more!
+
+**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)** 😄
 
 ## 👥 Team SQLSisters
 
