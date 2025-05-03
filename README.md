@@ -7,8 +7,6 @@
 Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with features.
 From personalized orders to seller dashboards, we’ve got the essentials and more!
 
-**Think Amazon, but lighter, faster and powered by passion (and PostgreSQL)** 😄
-
 ## 👥 Team SQLSisters
 
 - [Bárbara Flores Ríos](https://github.com/BarbaraPFloresRios) - Products Guru: responsible for Products
@@ -21,35 +19,21 @@ From personalized orders to seller dashboards, we’ve got the essentials and mo
 
 - [Simrun Sharma](https://github.com/simrunsharma) - Users Guru: responsible for Account / Purchases
 
-## 📌 Project Option
+## Project Option
 
 We have chosen the **Standard Project Option**.
 
-## 📺 Project Demo Video (~15 minutes)
+## Project Demo Video (~15 minutes)
 
 [Watch Our Demo Video](https://www.youtube.com/watch?v=GVMNRrzjeIs)
 
-## ✨Feature Lists
+## Feature Lists
 
 [Full Feature Lists](https://docs.google.com/document/d/1XAlcIsGDkeXz2OzyxlBozeXgLm_WxdnBtcuDOdVjFv0/edit?usp=sharing)
 
-## 📂 Repository Link  
+## Repository Link  
 
 [GitLab Repository](https://gitlab.oit.duke.edu/ss1486/sql-sisters)  
-
-## 📝 Progress Summary  
-
-Each team member has independently completed all the **initial setup requirements** for `README.md` and `TUTORIAL.md` and has successfully created their respective branches. Everyone was responsible for designing the **database tables** for their assigned website features, as well as the **UI and interactions**.  
-
-In addition to their primary tasks:  
-
-- **Bárbara** integrated all tables and created the **database schema diagram**.  
-- **Shaila** organized and facilitated **team meetings**.  
-- **Daniela** structured the **final deliverable's PowerPoint framework**.  
-- **Jiechen** authored the **README documentation**.  
-- **Simrun** set up the **repository**.  
-
-Throughout the project, the entire team actively collaborated in our **WhatsApp group**, offering support and explanations to each other. This has been an incredibly enjoyable and productive teamwork experience! 🎉  
 
 ## Local Development Guide
 
@@ -155,6 +139,12 @@ This typically runs create.sql and load.sql to initialize tables and insert test
  ```bash
  flask run
  ```
+
+## 📝 Progress Summary  
+
+Each team member has independently completed all the **initial setup requirements** for `README.md` and `TUTORIAL.md` and has successfully created their respective branches. Everyone was responsible for designing the **database tables** for their assigned website features, as well as the **UI and interactions**.  
+
+Throughout the project, the entire team actively collaborated in our **WhatsApp group**, offering support and explanations to each other. This has been an incredibly enjoyable and productive teamwork experience! 🎉  
 
 ## Initial Setup Tutorial
 
