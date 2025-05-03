@@ -6,6 +6,7 @@ Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with fe
 From personalized orders to seller dashboards, we’ve got the essentials and more!
 
 ## 👥 Team SQLSisters
+
 - [Bárbara Flores Ríos](https://github.com/BarbaraPFloresRios) - Products Guru: responsible for Products
 
 - [Shaila Janeth Güereca Guzmán](https://github.com/shailajgg) - Carts Guru: responsible for Cart / Order
@@ -17,21 +18,27 @@ From personalized orders to seller dashboards, we’ve got the essentials and mo
 - [Simrun Sharma](https://github.com/simrunsharma) - Users Guru: responsible for Account / Purchases
 
 ## 📌 Project Option
+
 We have chosen the **Standard Project Option**.
 
 ## 📺 Project Demo Video (~15 minutes)
+
 [Watch Our Demo Video](https://www.youtube.com/watch?v=GVMNRrzjeIs)
 
 ## ✨Feature Lists
+
 [Full Feature Lists](https://docs.google.com/document/d/1XAlcIsGDkeXz2OzyxlBozeXgLm_WxdnBtcuDOdVjFv0/edit?usp=sharing)
 
 ## 📂 Repository Link  
+
 [GitLab Repository](https://gitlab.oit.duke.edu/ss1486/sql-sisters)  
 
 ## 📝 Progress Summary  
+
 Each team member has independently completed all the **initial setup requirements** for `README.md` and `TUTORIAL.md` and has successfully created their respective branches. Everyone was responsible for designing the **database tables** for their assigned website features, as well as the **UI and interactions**.  
 
 In addition to their primary tasks:  
+
 - **Bárbara** integrated all tables and created the **database schema diagram**.  
 - **Shaila** organized and facilitated **team meetings**.  
 - **Daniela** structured the **final deliverable's PowerPoint framework**.  
@@ -40,8 +47,114 @@ In addition to their primary tasks:
 
 Throughout the project, the entire team actively collaborated in our **WhatsApp group**, offering support and explanations to each other. This has been an incredibly enjoyable and productive teamwork experience! 🎉  
 
+## Local Development Guide
+
+### ⚙️ Prerequisites
+
+Ensure the following tools are installed:
+
+- [Python 3.11+](https://www.python.org/downloads/)
+- [Poetry](https://python-poetry.org/docs/#installation)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- [psql CLI](https://www.postgresql.org/docs/current/app-psql.html)
+- [Git](https://git-scm.com/)
+
+### 1. Clone the repository
+
+ ```bash
+git clone git@github.com:carrieli15/Database-Final-Project.git
+cd Database-Final-Project
+```
+
+### 2. Install dependencies with Poetry
+
+a) Configure Poetry to use in-project virtualenv:
+
+ ```bash
+poetry config virtualenvs.in-project true
+ ```
+
+b) Install all dependencies:
+
+ ```bash
+ poetry install
+ ```
+
+c) Activate the virtual environment:
+
+ ```bash
+ eval $(poetry env activate)
+ ```
+
+### 3. Set up environment variables
+
+Create a .flaskenv file in the root of the project:
+
+ ```bash
+ cat > .flaskenv <<EOF
+FLASK_APP=amazon.py
+FLASK_DEBUG=True
+FLASK_RUN_PORT=5000
+SECRET_KEY=dev-secret
+
+DB_NAME=amazon
+DB_USER=(your user name)
+DB_PASSWORD=(your password or keep it blank)
+DB_HOST=localhost
+DB_PORT=5432
+EOF
+ ```
+
+Make sure `DB_USER` and `DB_PASSWORD` match your local PostgreSQL setup.
+
+### 4. Set up PostgreSQL
+
+a) Install PostgreSQL
+
+```bash
+brew install postgresql
+```
+
+b) Start PostgreSQL service (macOS with Homebrew):
+
+ ```bash
+ brew services start postgresql
+ ```
+
+c) Create database and user (if needed):
+
+ ```bash
+ createdb amazon
+ ```
+
+ ```bash
+ psql amazon
+ ```
+
+ ```bash
+ CREATE ROLE (your user name) WITH LOGIN PASSWORD '(your password or keep it blank)';
+ ALTER ROLE (your user name) CREATEDB;
+ ```
+
+### 5. Initialize the database schema
+
+Run the setup script (make sure db/setup.sh exists and is executable):
+
+ ```bash
+ db/setup.sh generated
+ ```
+
+This typically runs create.sql and load.sql to initialize tables and insert test data.
+
+### 6. Start the Flask server
+
+ ```bash
+ flask run
+ ```
+
 ## Initial Setup Tutorial
-## Skeleton Code for CompSci 316/516 Standard Course Project.
+
+## Skeleton Code for CompSci 316/516 Standard Course Project
 
 Originally created by [Rickard
 Stureborg](http://www.rickard.stureborg.com) and [Yihao
@@ -71,7 +184,7 @@ vary.
 2. In your container shell, issue the command `git clone
    THE_TEXT_YOU_JUST_COPIED` (make sure to replace
    `THE_TEXT_YOU_JUST_COPIED` with the "Clone with SSH" text).
-   
+
 3. In your container shell, change into the repository directory and
    then run `./install.sh`.  This will install a bunch of things, set
    up an important file called `.flashenv`, and creates a simple
@@ -81,6 +194,7 @@ vary.
 
 To run your website, in your container shell, go into the repository
 directory and issue the following commands:
+
 ```
 poetry shell
 flask run
@@ -96,11 +210,11 @@ errors.
 You can now use your laptop's browser to explore the website.
 Depending on your setup, the URL will be different:
 
-* If you use containers on your own laptop, point your browser to
-  http://localhost:8080/
+- If you use containers on your own laptop, point your browser to
+  <http://localhost:8080/>
 
-* If you use the Duke OIT container, visit
-  https://cmgr.oit.duke.edu/containers and open the CONTAINER CONTROLS
+- If you use the Duke OIT container, visit
+  <https://cmgr.oit.duke.edu/containers> and open the CONTAINER CONTROLS
   info pane for your CS316/516 container.  There will be a line specifying
   a user-specific URL for accessing a Flask app.  Point your browser
   to that URL.
@@ -109,7 +223,7 @@ Depending on your setup, the URL will be different:
     run/debug your project from there (by following these
     instructions), then VSCode will do some (SSH port forwarding)
     magic to make your Flask app also accessible at
-    http://localhost:8080/
+    <http://localhost:8080/>
 
 To stop your app, type <kbd>CTRL</kbd>-<kbd>C</kbd> in the container
 shell; that will take you back to the command-line prompt, still
@@ -136,12 +250,12 @@ database, first make sure that you are NOT running your Flask server
 or any `psql` sessions; then, from your repository directory, run
 `db/setup.sh`.
 
-* You will see lots of text flying by --- make sure you go through
+- You will see lots of text flying by --- make sure you go through
   them carefully and verify there was no errors.  Any error in
   (re-)initializing the database will cause your Flask server to fail,
   so make sure you fix them.
 
-* If you get `ERROR: database "amazon" is being accessed by other
+- If you get `ERROR: database "amazon" is being accessed by other
   users`, that means you likely have Flask or another `psql` still
   running; terminate them and re-run `db/setup.sh`.  If you cannot
   seem to find where you are running them, a sure way to get rid of
@@ -159,13 +273,13 @@ generated`; these files are automatically generated by running a
 script (which you can re-run by going inside `db/data/generated/` and
 running `python gen.py`.
 
-* Note that PostgreSQL does NOT store data inside these CSV files; it
+- Note that PostgreSQL does NOT store data inside these CSV files; it
   store data on disk files using an efficient, binary format.  In
   other words, if you change your database contents through your
   website or through `psql`, you will NOT see these changes reflected
   in these CSV files (but you can see them through `psql amazon`).
 
-* For safety, a database should never store password in plain text;
+- For safety, a database should never store password in plain text;
   instead it stores one-way hash of the password.  This rule applies
   to the password value in the CSV files too.  To see what hashed
   password value you should put in a CSV file, see `db/data/gen.py`
