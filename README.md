@@ -7,7 +7,7 @@
 Hi, we’ve built a Mini Amazon just for you — fast, smart, and packed with features.
 From personalized orders to seller dashboards, we’ve got the essentials and more!
 
-## 👥 Team SQLSisters
+## Team SQLSisters
 
 - [Bárbara Flores Ríos](https://github.com/BarbaraPFloresRios) - Products Guru: responsible for Products
 
@@ -18,10 +18,6 @@ From personalized orders to seller dashboards, we’ve got the essentials and mo
 - [Jiechen Li](https://github.com/carrieli15) - Sellers Guru: responsible for Inventory / Order Fulfillment
 
 - [Simrun Sharma](https://github.com/simrunsharma) - Users Guru: responsible for Account / Purchases
-
-## Project Option
-
-We have chosen the **Standard Project Option**.
 
 ## Project Demo Video (~15 minutes)
 
